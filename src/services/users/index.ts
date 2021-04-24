@@ -36,3 +36,7 @@ export const deleteUser = async (req: Request, res: Response): Promise<Response>
     }
     return res.status(404).json({ message: 'Not User found' });
 };
+
+export const getUserByEmail = async (email: string): Promise<Users> => {
+    return await getRepository(Users).findOne({ where: { email: email } });
+};

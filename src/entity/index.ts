@@ -1,4 +1,4 @@
-import { Users } from './Users';
-import { Customer } from './Customer';
+import { Users } from './users';
+import { Customer } from './customer';
 
 export { Users, Customer };

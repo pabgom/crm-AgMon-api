@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { AuthenticateService } from './../services';
+import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert } from 'typeorm';
 
 @Entity()
 export class Users {
@@ -10,4 +11,11 @@ export class Users {
 
     @Column()
     password: string;
+
+    @BeforeInsert()
+    async encriptPassword() {
+        this.password = await AuthenticateService.encriptPassord(this.password);
+    }
+
+    constructor() {}
 }
