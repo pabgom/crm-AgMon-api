@@ -1,23 +1,24 @@
 import { Router } from 'express';
-import { getCustomer } from '../services/customers';
+
+import { CustomerService } from './../services';
 
 /** Route Definition */
 const customerRouter: Router = Router();
 
 /** Controller Definition */
 // GET customer
-customerRouter.get('/', getCustomer);
+customerRouter.get('/', CustomerService.getCustomers);
 
 // GET customer/:id
-customerRouter.get('/:id', getCustomer);
+customerRouter.get('/:id', CustomerService.getCustomer);
 
 // POST customer
-customerRouter.post('/', getCustomer);
+customerRouter.post('/', CustomerService.createCustomer);
 
 // PUT customer/:id
-customerRouter.put('/:id', getCustomer);
+customerRouter.put('/:id', CustomerService.updateCustomer);
 
 // DELETE customer/:id
-customerRouter.delete('/:id', getCustomer);
+customerRouter.delete('/:id', CustomerService.deleteCustomer);
 
 export default customerRouter;

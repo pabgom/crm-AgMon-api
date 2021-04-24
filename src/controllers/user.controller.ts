@@ -1,23 +1,24 @@
 import { Router } from 'express';
-import { getCustomer } from '../services/customers';
+
+import { UserService } from './../services';
 
 /** Route Definition */
 const userRouter: Router = Router();
 
 /** Controller Definition */
 // GET user
-userRouter.get('/', getCustomer);
+userRouter.get('/', UserService.getUsers);
 
 // GET user/:id
-userRouter.get('/:id', getCustomer);
+userRouter.get('/:id', UserService.getUser);
 
 // POST user
-userRouter.post('/', getCustomer);
+userRouter.post('/', UserService.createUser);
 
 // PUT user/:id
-userRouter.put('/:id', getCustomer);
+userRouter.put('/:id', UserService.updateUser);
 
 // DELETE user/:id
-userRouter.delete('/:id', getCustomer);
+userRouter.delete('/:id', UserService.deleteUser);
 
 export default userRouter;
