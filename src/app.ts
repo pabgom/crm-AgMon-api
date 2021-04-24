@@ -1,4 +1,5 @@
 import express from 'express';
+require('dotenv').config();
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.get('/', (req, res) => {
 /**
  * Server Activation
  */
-app.listen(3000, () => {
-    console.log('App running at 3000');
+console.log(process.env.NODE_ENV);
+app.listen(process.env.PORT, () => {
+    console.log(`App running at ${process.env.PORT}`);
 });
