@@ -6,7 +6,7 @@
   "scripts": {
     "build": "rimraf ./build && tsc",
     "start:dev": "nodemon src/app.ts",
-    "start": "npm run build && node build/app.js",
+    "start": "npm run build && node build/app.js"
   },
   "repository": {
     "type": "git",

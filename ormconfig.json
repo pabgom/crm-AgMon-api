@@ -1,0 +1,10 @@
+{
+    "type":"postgres",
+    "host":"localhost",
+    "port":123,
+    "username":"",
+    "password":"",
+    "database":"",
+    "entities":["dist/models/entities/**/*.js"],
+    "synchronize":true
+}
