@@ -18,7 +18,7 @@ export class Users {
     roles: Role[];
 
     @BeforeInsert()
-    async encriptPassword() {
-        this.password = await AuthenticateService.encriptPassord(this.password);
+    async encryptPassword() {
+        this.password = await AuthenticateService.encryptPassword(this.password);
     }
 }

@@ -12,7 +12,7 @@ export async function InitializeDB(): Promise<void> {
         password: config.DB_PASSWORD,
         database: config.DB_DATABASE,
         entities: [User, Customer, Role],
-        synchronize: process.env.DB_SYNCRONIZE === 'true',
+        synchronize: process.env.DB_SYNCHRONIZE === 'true',
         logging: false
     });
 

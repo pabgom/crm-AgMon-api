@@ -4,9 +4,9 @@ import authentication from './../lib/auth';
 import config from './../config';
 
 /** Authenticate Definitions */
-const athenticationRouter: Router = Router();
+const authenticationRouter: Router = Router();
 
-athenticationRouter.post('/login', (req, res, next) => {
+authenticationRouter.post('/login', (req, res, next) => {
     authentication.authenticate('login', async (err, user, info) => {
         try {
             if (err || user) {
@@ -19,7 +19,7 @@ athenticationRouter.post('/login', (req, res, next) => {
 
                 const body = {};
 
-                const token = jwt.sign({ user: body }, config.JWT_SECRETKEY);
+                const token = jwt.sign({ user: body }, config.JWT_SECRET_KEY);
                 return res.json({ token });
             });
         } catch (e) {
@@ -28,4 +28,4 @@ athenticationRouter.post('/login', (req, res, next) => {
     })(req, res, next);
 });
 
-export default athenticationRouter;
+export default authenticationRouter;
