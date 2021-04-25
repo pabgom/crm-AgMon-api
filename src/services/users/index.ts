@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { Connection, getRepository } from 'typeorm';
 import { UserSchemas } from './../../schema';
 import { RoleEntity, UserEntity } from './../../entity';
-import { IRead } from '../../models/interface/read.interface';
 
 export const getUsers = async (req: Request, res: Response): Promise<Response> => {
     const users = await getRepository(UserEntity).find();
