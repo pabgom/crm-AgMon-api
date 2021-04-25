@@ -1,6 +1,6 @@
 import { createConnection, getRepository } from 'typeorm';
 import config, { Roles } from './../config';
-import { User, Customer, Role } from './../entity';
+import { CustomerEntity, RoleEntity, UserEntity } from './../entity';
 
 export async function InitializeDB(): Promise<void> {
     /** Create Connection to DataBase */
@@ -11,13 +11,13 @@ export async function InitializeDB(): Promise<void> {
         username: config.DB_USER,
         password: config.DB_PASSWORD,
         database: config.DB_DATABASE,
-        entities: [User, Customer, Role],
+        entities: [UserEntity, CustomerEntity, RoleEntity],
         synchronize: process.env.DB_SYNCHRONIZE === 'true',
         logging: false
     });
 
     /** Validate if table users is empty, in that case create first user, run the seed data */
-    const users = await getRepository(User).find();
+    const users = await getRepository(UserEntity).find();
     if (users.length > 0) return;
 
     await seedRoles();
@@ -25,20 +25,20 @@ export async function InitializeDB(): Promise<void> {
 }
 
 /** Create Roles in the DB */
-async function seedRoles(): Promise<Role[]> {
-    const adminRole: Role = { id: Roles.Admin, name: 'admin' };
-    const basicRole: Role = { id: Roles.Basic, name: 'basic' };
+async function seedRoles(): Promise<RoleEntity[]> {
+    const adminRole: RoleEntity = { id: Roles.Admin, name: 'admin' };
+    const basicRole: RoleEntity = { id: Roles.Basic, name: 'basic' };
 
     // Insert roles in the DB
-    return await getRepository(Role).save([adminRole, basicRole]);
+    return await getRepository(RoleEntity).save([adminRole, basicRole]);
 }
 
-async function seedUser(): Promise<User> {
-    const roleAdmin = await getRepository(Role).findOne(Roles.Admin);
+async function seedUser(): Promise<UserEntity> {
+    const roleAdmin = await getRepository(RoleEntity).findOne(Roles.Admin);
 
-    const user: User = new User();
+    const user: UserEntity = new UserEntity();
     user.name = config.INITIAL_USER_NAME;
     user.password = config.INITIAL_USER_PASSWORD;
     user.roles = [roleAdmin];
-    return await getRepository(User).save(user);
+    return await getRepository(UserEntity).save(user);
 }

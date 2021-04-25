@@ -1,5 +1,5 @@
-import { Users as User } from './users';
-import { Customer } from './customer';
-import { Role } from './role';
+import { UserEntity } from './user.entity';
+import { CustomerEntity } from './customer.entity';
+import { RoleEntity } from './role.entity';
 
-export { User, Customer, Role };
+export { UserEntity, CustomerEntity, RoleEntity };

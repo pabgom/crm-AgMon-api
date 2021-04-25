@@ -9,5 +9,5 @@ export const encryptPassword = (password: string): Promise<string> => {
 };
 
 export const ComparePasswords = (originalPassword, password): Promise<boolean> => {
-    return bcrypt.compare(originalPassword, password);
+    return bcrypt.compare(password, originalPassword);
 };
