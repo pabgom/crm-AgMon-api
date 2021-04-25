@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
  * Centralize all the code about Authentication
  */
 
-export const encriptPassord = (password: string): Promise<string> => {
+export const encryptPassword = (password: string): Promise<string> => {
     return bcrypt.hash(password, 10);
 };
 
