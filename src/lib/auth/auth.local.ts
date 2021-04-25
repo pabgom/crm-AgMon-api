@@ -6,12 +6,12 @@ import { AuthenticateService, UserService } from './../../services';
 const localStrategy = () => {
     return new Strategy(
         {
-            usernameField: 'email',
-            passwordField: 'pasword'
+            usernameField: 'username',
+            passwordField: 'password'
         },
-        async (email, password, done) => {
+        async (username, password, done) => {
             try {
-                const user = await UserService.getUserByEmail(email);
+                const user = await UserService.getUserByUserName(username);
 
                 if (!user) {
                     return done(null, false, { message: 'User not found' });
@@ -22,7 +22,7 @@ const localStrategy = () => {
                 if (!validate) {
                     return done(null, false, { message: 'Wrong password' });
                 }
-                return done(null, user, { message: 'Login successfull' });
+                return done(null, user, { message: 'Login successful' });
             } catch (e) {
                 return done(e);
             }
