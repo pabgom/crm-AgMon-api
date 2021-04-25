@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
-import { getRepository } from 'typeorm';
-import { UserEntity } from './../../entity';
+import { Connection, getRepository } from 'typeorm';
+import { UserSchemas } from './../../schema';
+import { RoleEntity, UserEntity } from './../../entity';
+import { IRead } from '../../models/interface/read.interface';
 
 export const getUsers = async (req: Request, res: Response): Promise<Response> => {
     const users = await getRepository(UserEntity).find();
@@ -13,7 +15,12 @@ export const getUser = async (req: Request, res: Response): Promise<Response> =>
 };
 
 export const createUser = async (req: Request, res: Response): Promise<Response> => {
-    const newUser = getRepository(UserEntity).create(req.body);
+    const newUser = getRepository(UserEntity).create(req.body as UserEntity);
+
+    const role = await getRepository(RoleEntity).findOne(req.body.role);
+
+    newUser.roles = [role];
+
     const results = await getRepository(UserEntity).save(newUser);
     return res.status(200).json(results);
 };
@@ -38,5 +45,5 @@ export const deleteUser = async (req: Request, res: Response): Promise<Response>
 };
 
 export const getUserByUserName = async (username: string): Promise<UserEntity> => {
-    return await getRepository(UserEntity).findOne({ where: { name: username } });
+    return await getRepository(UserEntity).findOne({ where: { name: username }, relations: ['roles'] });
 };

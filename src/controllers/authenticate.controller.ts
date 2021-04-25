@@ -1,13 +1,14 @@
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
-import authentication from './../lib/auth';
-import config from './../config';
-import Logger from '../lib/logger';
+import authentication, { hasCredentials, isAuthenticated } from './../lib/auth';
+import config, { Roles } from './../config';
+import validateDto from '../middleware/validate-dto';
+import { AuthSchema } from '../schema';
 
 /** Authenticate Definitions */
 const authenticationRouter: Router = Router();
 
-authenticationRouter.post('/login', (req, res, next) => {
+authenticationRouter.post('/login', validateDto(AuthSchema), (req, res, next) => {
     authentication.authenticate('login', async (err, user, info) => {
         try {
             if (err) {
@@ -18,7 +19,7 @@ authenticationRouter.post('/login', (req, res, next) => {
             req.login(user, { session: false }, async err => {
                 if (err) return next(err);
 
-                const body = { id: user.id, username: user.name };
+                const body = { id: user.id, username: user.name, roles: user.roles };
 
                 const token = jwt.sign({ user: body }, config.JWT_SECRET_KEY, { algorithm: 'HS256' });
                 return res.json({ token });
@@ -29,10 +30,10 @@ authenticationRouter.post('/login', (req, res, next) => {
     })(req, res, next);
 });
 
-authenticationRouter.get('/profile', authentication.authenticate('jwt', { session: false }), (req, res, next) => {
-    console.log(' PASO Profile');
+authenticationRouter.get('/profile', isAuthenticated(), hasCredentials([Roles.Basic, Roles.Admin]), (req, res, next) => {
     res.json({
-        message: 'Work'
+        message: 'Work',
+        user: req.user
     });
 });
 

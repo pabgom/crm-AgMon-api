@@ -1,24 +1,28 @@
 import { Router } from 'express';
 
 import { UserService } from './../services';
+import validateDto from './../middleware/validate-dto';
+import { UserSchemas } from './../schema';
+import { hasCredentials, isAuthenticated } from '../lib/auth';
+import { Roles } from '../config';
 
 /** Route Definition */
 const userRouter: Router = Router();
 
 /** Controller Definition */
 // GET user
-userRouter.get('/', UserService.getUsers);
+userRouter.get('/', isAuthenticated(), hasCredentials([Roles.Admin]), UserService.getUsers);
 
 // GET user/:id
-userRouter.get('/:id', UserService.getUser);
+userRouter.get('/:id', isAuthenticated(), hasCredentials([Roles.Admin]), UserService.getUser);
 
 // POST user
-userRouter.post('/', UserService.createUser);
+userRouter.post('/', isAuthenticated(), hasCredentials([Roles.Admin]), validateDto(UserSchemas.createUserSchema), UserService.createUser);
 
 // PUT user/:id
-userRouter.put('/:id', UserService.updateUser);
+userRouter.put('/:id', isAuthenticated(), hasCredentials([Roles.Admin]), UserService.updateUser);
 
 // DELETE user/:id
-userRouter.delete('/:id', UserService.deleteUser);
+userRouter.delete('/:id', isAuthenticated(), hasCredentials([Roles.Admin]), UserService.deleteUser);
 
 export default userRouter;

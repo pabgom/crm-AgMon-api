@@ -14,8 +14,18 @@ export class UserEntity {
     @Column({ type: 'character varying', nullable: false })
     password: string;
 
-    @ManyToMany(() => RoleEntity)
-    @JoinTable()
+    @ManyToMany(() => RoleEntity, { cascade: true })
+    @JoinTable({
+        name: 'users_roles',
+        joinColumn: {
+            name: 'user_id',
+            referencedColumnName: 'id'
+        },
+        inverseJoinColumn: {
+            name: 'roles_id',
+            referencedColumnName: 'id'
+        }
+    })
     roles: RoleEntity[];
 
     @OneToMany(() => CustomerEntity, customer => customer.createdBy)

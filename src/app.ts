@@ -1,11 +1,12 @@
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import morganMiddleware from './config/morganMiddleware';
+import morganMiddleware from './middleware/morganMiddleware';
 import config from './config';
 import routes from './routes';
 import Logger from './lib/logger';
 import { InitializeDB } from './database';
+import apiErrorHandler from './error';
 
 const app = express();
 
@@ -13,6 +14,7 @@ const app = express();
 InitializeDB();
 
 /** Middleware */
+
 app.use(morganMiddleware);
 app.use(cors({ origin: true }));
 app.use(
@@ -22,7 +24,7 @@ app.use(
 );
 app.use(bodyParser.json());
 app.use(routes);
-
+app.use(apiErrorHandler);
 /**
  * Server Activation
  */
