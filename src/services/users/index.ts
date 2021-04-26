@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Connection, getRepository } from 'typeorm';
+import { getRepository } from 'typeorm';
 import { UserSchemas } from './../../schema';
 import { RoleEntity, UserEntity } from './../../entity';
 
