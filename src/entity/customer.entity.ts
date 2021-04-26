@@ -7,16 +7,20 @@ export class CustomerEntity {
     id: number;
 
     @Column({
-        length: 255
+        length: 255,
+        type: 'character varying',
+        nullable: false
     })
     name: string;
 
     @Column({
-        length: 255
+        length: 255,
+        type: 'character varying',
+        nullable: false
     })
     surname: string;
 
-    @Column({ length: 255 })
+    @Column({ length: 255, type: 'character varying', nullable: true })
     photoUrl: string;
 
     @ManyToOne(() => UserEntity, (user: UserEntity) => user.customersCreated)
