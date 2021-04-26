@@ -17,7 +17,7 @@ userRouter.get('/', isAuthenticated(), hasCredentials([Roles.Admin]), UserServic
 userRouter.get('/:id', isAuthenticated(), hasCredentials([Roles.Admin]), UserService.getUser);
 
 // POST user
-userRouter.post('/', isAuthenticated(), hasCredentials([Roles.Admin]), validateDto(UserSchemas.createUserSchema), UserService.createUser);
+userRouter.post('/', validateDto(UserSchemas.createUserSchema), isAuthenticated(), hasCredentials([Roles.Admin]), UserService.createUser);
 
 // PUT user/:id
 userRouter.put('/:id', isAuthenticated(), hasCredentials([Roles.Admin]), UserService.updateUser);
