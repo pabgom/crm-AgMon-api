@@ -25,19 +25,26 @@ class UserService {
         return getRepository(UserEntity).findOne({ where: { id: id } });
     }
 
-    async create(user: UserEntity, roleId: number): Promise<UserEntity> {
+    async create(user: UserEntity, roleId: number): Promise<UserEntity | string> {
+        var validateUser = await this.findByUserName(user.name);
+        if (validateUser) {
+            return 'Exists an user with the same name';
+        }
+
         const role = await RoleService.findOne(roleId);
         user.roles = [role];
 
         const newUser = getRepository(UserEntity).create(user);
-        if (newUser) {
-            return null;
-        }
 
         return getRepository(UserEntity).save(newUser);
     }
 
-    async update(newData: UserEntity, roleId?: number): Promise<UserEntity> {
+    async update(newData: UserEntity, roleId?: number): Promise<UserEntity | string> {
+        var validateUser = await this.findByUserName(newData.name);
+        if (validateUser && validateUser.id !== newData.id) {
+            return 'Exists an user with the same name';
+        }
+
         const user = await getRepository(UserEntity).findOne(newData.id);
 
         if (user) {
@@ -48,9 +55,9 @@ class UserService {
 
             getRepository(UserEntity).merge(user, newData);
             return getRepository(UserEntity).save(user);
+        } else {
+            return 'User not found';
         }
-
-        return null;
     }
 
     async delete(id: number): Promise<DeleteResult> {
