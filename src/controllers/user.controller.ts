@@ -48,14 +48,14 @@ userRouter.post('/', validateDto(UserSchemas.createUserSchema), isAuthenticated(
     user.password = dto.password;
 
     UserService.create(user, dto.roleId)
-        .then(newUser => {
-            if (newUser) {
+        .then(response => {
+            if (response instanceof UserEntity) {
                 res.status(200).json({
                     message: 'User Successfully Created',
-                    createdUser: newUser
+                    createdUser: response
                 });
             } else {
-                res.status(404).json({ message: 'User not found' });
+                res.status(404).json({ message: response });
             }
         })
         .catch(e => {
@@ -73,14 +73,14 @@ userRouter.put('/:id', isAuthenticated(), hasCredentials([Roles.Admin]), (req, r
     user.name = dto.name;
 
     UserService.update(user, dto.roleId)
-        .then(modifiedUser => {
-            if (modifiedUser) {
+        .then(response => {
+            if (response instanceof UserEntity) {
                 res.status(200).json({
                     message: 'User Successfully Updated',
-                    modifiedUser: modifiedUser
+                    modifiedUser: response
                 });
             } else {
-                res.status(404).json({ message: 'User not found' });
+                res.status(404).json({ message: response });
             }
         })
         .catch(e => {
