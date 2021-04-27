@@ -9,7 +9,6 @@ class CustomerService {
     }
 
     findOne(id: number): Promise<CustomerEntity> {
-        console.log(id);
         return getRepository(CustomerEntity).findOne({ where: { id: id } });
     }
 

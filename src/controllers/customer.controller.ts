@@ -31,7 +31,6 @@ customerRouter.get('/:id', isAuthenticated(), hasCredentials([Roles.Basic, Roles
     let id = +req.params.id;
 
     if (isNaN(id)) {
-        console.log('test');
         res.status(400).json({ message: 'Input data is not in the correct format.' });
         next();
         return;
@@ -96,7 +95,6 @@ customerRouter.put(
         customer.surname = dto.surname;
 
         if (req.file) {
-            console.log(req.file);
             customer.photoUrl = req.file.filename;
         }
 
@@ -133,11 +131,10 @@ customerRouter.delete(
 
         CustomerService.delete(id)
             .then(result => {
-                console.log(result);
                 res.status(200).json(result);
             })
             .catch(e => {
-                console.log(e);
+                Logger.error(e);
                 res.status(500);
             });
     }

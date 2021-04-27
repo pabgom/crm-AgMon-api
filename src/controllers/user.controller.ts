@@ -27,7 +27,6 @@ userRouter.get('/:id', isAuthenticated(), hasCredentials([Roles.Admin]), (req, r
     let id = +req.params.id;
 
     if (isNaN(id)) {
-        console.log('test');
         res.status(400).json({ message: 'Input data is not in the correct format.' });
         next();
         return;
@@ -100,11 +99,10 @@ userRouter.delete('/:id', isAuthenticated(), hasCredentials([Roles.Admin]), (req
 
     UserService.delete(id)
         .then(result => {
-            console.log(result);
             res.status(200).json(result);
         })
         .catch(e => {
-            console.log(e);
+            Logger.error(e);
             res.status(500);
         });
 });
