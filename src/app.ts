@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
 import bodyParser from 'body-parser';
 import morganMiddleware from './middleware/morganMiddleware';
 import config from './config';
@@ -16,15 +17,20 @@ InitializeDB();
 /** Middleware */
 
 app.use(morganMiddleware);
-app.use(cors({ origin: true }));
+
+var dir = path.join(__dirname, 'uploads');
+app.use('/uploads', express.static(dir));
+
 app.use(
     bodyParser.urlencoded({
         extended: true
     })
 );
+
 app.use(bodyParser.json());
 app.use(routes);
 app.use(apiErrorHandler);
+
 /**
  * Server Activation
  */
