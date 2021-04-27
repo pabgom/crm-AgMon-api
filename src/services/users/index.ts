@@ -55,17 +55,16 @@ class UserService {
 
     async delete(id: number): Promise<DeleteResult> {
         const userDb = await this.findOne(id);
-        const emptyResult = new DeleteResult();
-        emptyResult.affected = 0;
+        const deleteResult = new DeleteResult();
+        deleteResult.affected = 0;
         if (userDb) {
             userDb.active = false;
             await this.update(userDb, null);
-            emptyResult.affected++;
-            // return getRepository(UserEntity).delete(userDb);
+            deleteResult.affected++;
         }
-        emptyResult.raw = [];
+        deleteResult.raw = [];
 
-        return emptyResult;
+        return deleteResult;
     }
 }
 
