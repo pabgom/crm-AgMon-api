@@ -1,48 +1,71 @@
-import { Request, Response } from 'express';
-import { getRepository } from 'typeorm';
-import { UserSchemas } from './../../schema';
-import { RoleEntity, UserEntity } from './../../entity';
+import { DeleteResult, FindManyOptions, getRepository } from 'typeorm';
+import RoleService from './../roles';
+import { UserEntity } from './../../entity';
 
-export const getUsers = async (req: Request, res: Response): Promise<Response> => {
-    const users = await getRepository(UserEntity).find();
-    return res.status(200).json(users);
-};
+class UserService {
+    /**
+     * Return all the users by default only return true
+     * @param userActive By default true
+     * @returns Return all the Users Entity
+     */
+    find(userActive: boolean = null): Promise<UserEntity[]> {
+        let options: FindManyOptions = {};
+        if (userActive) {
+            options = { where: { active: userActive } };
+        }
 
-export const getUser = async (req: Request, res: Response): Promise<Response> => {
-    const user = await getRepository(UserEntity).findOne(req.params.id);
-    return res.status(200).json(user);
-};
-
-export const createUser = async (req: Request, res: Response): Promise<Response> => {
-    const newUser = getRepository(UserEntity).create(req.body as UserEntity);
-
-    const role = await getRepository(RoleEntity).findOne(req.body.role);
-
-    newUser.roles = [role];
-
-    const results = await getRepository(UserEntity).save(newUser);
-    return res.status(200).json(results);
-};
-
-export const updateUser = async (req: Request, res: Response): Promise<Response> => {
-    const user = await getRepository(UserEntity).findOne(req.params.id);
-    if (user) {
-        getRepository(UserEntity).merge(user, req.body);
-        const result = await getRepository(UserEntity).save(user);
-        return res.status(200).json(result);
+        return getRepository(UserEntity).find(options);
     }
-    return res.status(404).json({ message: 'Not User found' });
-};
 
-export const deleteUser = async (req: Request, res: Response): Promise<Response> => {
-    const user = await getRepository(UserEntity).findOne(req.params.id);
-    if (user) {
-        const result = await getRepository(UserEntity).delete(user);
-        return res.status(200).json(result);
+    findByUserName(username: string): Promise<UserEntity> {
+        return getRepository(UserEntity).findOne({ where: { name: username }, relations: ['roles'] });
     }
-    return res.status(404).json({ message: 'Not User found' });
-};
 
-export const getUserByUserName = async (username: string): Promise<UserEntity> => {
-    return await getRepository(UserEntity).findOne({ where: { name: username }, relations: ['roles'] });
-};
+    findOne(id: number): Promise<UserEntity> {
+        return getRepository(UserEntity).findOne({ where: { id: id } });
+    }
+
+    async create(user: UserEntity, roleId: number): Promise<UserEntity> {
+        const role = await RoleService.findOne(roleId);
+        user.roles = [role];
+
+        const newUser = getRepository(UserEntity).create(user);
+        if (newUser) {
+            return null;
+        }
+
+        return getRepository(UserEntity).save(newUser);
+    }
+
+    async update(newData: UserEntity, roleId?: number): Promise<UserEntity> {
+        const user = await getRepository(UserEntity).findOne(newData.id);
+
+        if (user) {
+            if (roleId) {
+                const role = await RoleService.findOne(roleId);
+                user.roles = [role];
+            }
+
+            getRepository(UserEntity).merge(user, newData);
+            return getRepository(UserEntity).save(user);
+        }
+
+        return null;
+    }
+
+    async delete(id: number): Promise<DeleteResult> {
+        const userDb = await this.findOne(id);
+        const deleteResult = new DeleteResult();
+        deleteResult.affected = 0;
+        if (userDb) {
+            userDb.active = false;
+            await this.update(userDb, null);
+            deleteResult.affected++;
+        }
+        deleteResult.raw = [];
+
+        return deleteResult;
+    }
+}
+
+export default new UserService();

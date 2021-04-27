@@ -14,6 +14,9 @@ export class UserEntity {
     @Column({ type: 'character varying', nullable: false })
     password: string;
 
+    @Column({ type: 'boolean', nullable: false, default: true })
+    active: boolean;
+
     @ManyToMany(() => RoleEntity, { cascade: true })
     @JoinTable({
         name: 'users_roles',

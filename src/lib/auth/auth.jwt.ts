@@ -9,7 +9,6 @@ const jwtStrategy = () => {
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
         },
         async (token, done) => {
-            console.log(token.user);
             try {
                 return done(null, token.user);
             } catch (error) {

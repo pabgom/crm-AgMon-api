@@ -1,7 +1,7 @@
-import passport from 'passport';
 import { Strategy } from 'passport-local';
 
-import { AuthenticateService, UserService } from './../../services';
+import { AuthenticateService } from './../../services';
+import UserService from './../../services/users';
 
 const localStrategy = () => {
     return new Strategy(
@@ -11,7 +11,7 @@ const localStrategy = () => {
         },
         async (username, password, done) => {
             try {
-                const user = await UserService.getUserByUserName(username);
+                const user = await UserService.findByUserName(username);
 
                 if (!user) {
                     return done(null, false, { message: 'User not found' });
