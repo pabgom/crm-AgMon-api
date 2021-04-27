@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
+import rateLimit from 'express-rate-limit';
+
 import authentication, { hasCredentials, isAuthenticated } from './../lib/auth';
 import config, { Roles } from './../config';
 import validateDto from '../middleware/validate-dto';
@@ -8,7 +10,14 @@ import { AuthSchema } from '../schema';
 /** Authenticate Definitions */
 const authenticationRouter: Router = Router();
 
-authenticationRouter.post('/login', validateDto(AuthSchema), (req, res, next) => {
+// Limit the number of call to the POST login.
+const limiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minutes
+    max: 2, // limit each IP to 10 requests per windowMs,
+    message: { message: 'Too many login attempts. Try again in a minute' }
+});
+
+authenticationRouter.post('/login', limiter, validateDto(AuthSchema), (req, res, next) => {
     authentication.authenticate('login', async (err, user, info) => {
         try {
             if (err) {
