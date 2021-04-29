@@ -19,8 +19,8 @@ InitializeDB();
 app.use(morganMiddleware);
 app.use(helmet());
 
-var dir = path.join(__dirname, 'uploads');
-app.use('/uploads', express.static(dir));
+var dir = path.join(__dirname, 'public/customer');
+app.use('/public/customer', express.static(dir));
 
 app.use(
     bodyParser.urlencoded({
