@@ -28,7 +28,11 @@ export const hasCredentials = (credentials: number[] = []) => {
 
         const roles: RoleEntity[] = req.user.roles;
 
-        if (!roles.filter(r => credentials.find(c => c === r.id))) {
+        // Filter Role allowed
+        const roleFilter: RoleEntity[] = roles.filter(r => credentials.find(c => c === r.id));
+
+        // Validate if is allowed
+        if (roleFilter.length === 0) {
             return res.status(403).json({ message: 'User not allowed to do this action' });
         }
 

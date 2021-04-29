@@ -6,12 +6,12 @@ import UserService from './../../services/users';
 const localStrategy = () => {
     return new Strategy(
         {
-            usernameField: 'username',
+            usernameField: 'email',
             passwordField: 'password'
         },
-        async (username, password, done) => {
+        async (userEmail, password, done) => {
             try {
-                const user = await UserService.findByUserName(username);
+                const user = await UserService.findByEmail(userEmail);
 
                 if (!user) {
                     return done(null, false, { message: 'User not found' });
