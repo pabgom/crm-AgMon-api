@@ -1,6 +1,7 @@
 import { DeleteResult, FindManyOptions, getRepository } from 'typeorm';
 import RoleService from './../roles';
 import { UserEntity } from './../../entity';
+import { AuthenticateService } from '..';
 
 class UserService {
     /**
@@ -17,18 +18,18 @@ class UserService {
         return getRepository(UserEntity).find(options);
     }
 
-    findByUserName(username: string): Promise<UserEntity> {
-        return getRepository(UserEntity).findOne({ where: { name: username }, relations: ['roles'] });
+    findByEmail(userEmail: string): Promise<UserEntity> {
+        return getRepository(UserEntity).findOne({ where: { email: userEmail, active: true }, relations: ['roles'] });
     }
 
     findOne(id: number): Promise<UserEntity> {
-        return getRepository(UserEntity).findOne({ where: { id: id } });
+        return getRepository(UserEntity).findOne({ where: { id: id, active: true } });
     }
 
     async create(user: UserEntity, roleId: number): Promise<UserEntity | string> {
-        var validateUser = await this.findByUserName(user.name);
+        var validateUser = await this.findByEmail(user.email);
         if (validateUser) {
-            return 'Exists an user with the same name';
+            return 'Exists an user with the same email';
         }
 
         const role = await RoleService.findOne(roleId);
@@ -39,10 +40,10 @@ class UserService {
         return getRepository(UserEntity).save(newUser);
     }
 
-    async update(newData: UserEntity, roleId?: number): Promise<UserEntity | string> {
-        var validateUser = await this.findByUserName(newData.name);
+    async update(newData: UserEntity, roleId: number = null): Promise<UserEntity | string> {
+        var validateUser = await this.findByEmail(newData.email);
         if (validateUser && validateUser.id !== newData.id) {
-            return 'Exists an user with the same name';
+            return 'Exists an user with the same email';
         }
 
         const user = await getRepository(UserEntity).findOne(newData.id);
@@ -51,6 +52,9 @@ class UserService {
             if (roleId) {
                 const role = await RoleService.findOne(roleId);
                 user.roles = [role];
+            }
+            if (newData.password) {
+                newData.password = await AuthenticateService.encryptPassword(newData.password);
             }
 
             getRepository(UserEntity).merge(user, newData);
@@ -61,11 +65,12 @@ class UserService {
     }
 
     async delete(id: number): Promise<DeleteResult> {
-        const userDb = await this.findOne(id);
+        const userDb = await getRepository(UserEntity).findOne({ where: { id: id, active: true } });
         const deleteResult = new DeleteResult();
         deleteResult.affected = 0;
         if (userDb) {
             userDb.active = false;
+            userDb.email = `${userDb.email}-deleted`;
             await this.update(userDb, null);
             deleteResult.affected++;
         }

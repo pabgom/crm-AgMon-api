@@ -1,3 +1,4 @@
+import { ImageService } from './../../lib/upload-image';
 import { UserEntity } from './../../entity/user.entity';
 import { DeleteResult, getRepository } from 'typeorm';
 import { CustomerEntity } from './../../entity';
@@ -24,12 +25,17 @@ class CustomerService {
     async update(customer: CustomerEntity, payload: IPayload): Promise<CustomerEntity> {
         const customerDb = await this.findOne(customer.id);
         if (customerDb) {
+            let oldPhotoUrl = customerDb.photoUrl;
             getRepository(CustomerEntity).merge(customerDb, customer);
 
             const user = await getRepository(UserEntity).findOne(payload.id);
             customerDb.modifiedBy = user;
 
-            return getRepository(CustomerEntity).save(customerDb);
+            const newCustomer = await getRepository(CustomerEntity).save(customerDb);
+            if (oldPhotoUrl !== newCustomer.photoUrl) {
+                ImageService.replaceImage(oldPhotoUrl, newCustomer.photoUrl, '/public/customer');
+            }
+            return newCustomer;
         } else {
             return null;
         }
@@ -39,7 +45,11 @@ class CustomerService {
         const customer = await this.findOne(id);
 
         if (customer) {
-            return getRepository(CustomerEntity).delete(customer);
+            const result = await getRepository(CustomerEntity).delete(customer);
+            if (customer.photoUrl) {
+                ImageService.removeFile(customer.photoUrl, 'public/customer');
+            }
+            return result;
         }
 
         // Return
