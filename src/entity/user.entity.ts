@@ -8,11 +8,14 @@ export class UserEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ type: 'character varying', nullable: false })
+    @Column({ type: 'character varying', nullable: false, length: 255 })
     name: string;
 
-    @Column({ type: 'character varying', nullable: false })
+    @Column({ type: 'character varying', nullable: false, length: 255 })
     password: string;
+
+    @Column({ type: 'character varying', nullable: false, length: 255 })
+    email: string;
 
     @Column({ type: 'boolean', nullable: false, default: true })
     active: boolean;
