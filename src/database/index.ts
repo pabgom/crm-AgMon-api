@@ -38,6 +38,7 @@ async function seedUser(): Promise<UserEntity> {
 
     const user: UserEntity = new UserEntity();
     user.name = config.INITIAL_USER_NAME;
+    user.email = config.INITIAL_USER_EMAIL;
     user.password = config.INITIAL_USER_PASSWORD;
     user.roles = [roleAdmin];
     return await getRepository(UserEntity).save(user);
