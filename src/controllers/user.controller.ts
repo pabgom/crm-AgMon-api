@@ -4,7 +4,6 @@ import { UserSchemas } from './../schema';
 import { hasCredentials, isAuthenticated } from '../lib/auth';
 import { Roles } from '../config';
 import { UserDto } from '../models/dto';
-import { IPayload } from '../models/payload.interface';
 import { UserEntity } from './../entity/user.entity';
 import { Router } from 'express';
 import Logger from '../lib/logger';
@@ -45,9 +44,10 @@ userRouter.post('/', validateDto(UserSchemas.createUserSchema), isAuthenticated(
 
     const user = new UserEntity();
     user.name = dto.name;
+    user.email = dto.email;
     user.password = dto.password;
 
-    UserService.create(user, dto.roleId)
+    UserService.create(user, dto.role)
         .then(response => {
             if (response instanceof UserEntity) {
                 res.status(200).json({
@@ -62,7 +62,7 @@ userRouter.post('/', validateDto(UserSchemas.createUserSchema), isAuthenticated(
             Logger.error(e);
             res.status(500).json(e);
         });
-}); // UserService.createUser);
+});
 
 // PUT user/:id
 userRouter.put('/:id', isAuthenticated(), hasCredentials([Roles.Admin]), (req, res, next) => {
@@ -71,8 +71,10 @@ userRouter.put('/:id', isAuthenticated(), hasCredentials([Roles.Admin]), (req, r
     const user = new UserEntity();
     user.id = +req.params.id;
     user.name = dto.name;
+    user.password = dto.password;
+    user.email = dto.email;
 
-    UserService.update(user, dto.roleId)
+    UserService.update(user)
         .then(response => {
             if (response instanceof UserEntity) {
                 res.status(200).json({

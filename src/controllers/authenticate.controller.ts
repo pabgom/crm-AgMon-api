@@ -28,7 +28,7 @@ authenticationRouter.post('/login', limiter, validateDto(AuthSchema), (req, res,
             req.login(user, { session: false }, async err => {
                 if (err) return next(err);
 
-                const body = { id: user.id, username: user.name, roles: user.roles };
+                const body = { id: user.id, username: user.name, userEmail: user.email, roles: user.roles };
 
                 // Expire in 12 hours
                 const token = jwt.sign({ user: body }, config.JWT_SECRET_KEY, { algorithm: 'HS256', expiresIn: '12h' });
@@ -41,8 +41,7 @@ authenticationRouter.post('/login', limiter, validateDto(AuthSchema), (req, res,
 });
 
 authenticationRouter.get('/profile', isAuthenticated(), hasCredentials([Roles.Basic, Roles.Admin]), (req, res, next) => {
-    res.json({
-        message: 'Work',
+    res.status(200).json({
         user: req.user
     });
 });

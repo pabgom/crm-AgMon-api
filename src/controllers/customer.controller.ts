@@ -1,16 +1,15 @@
+import { Router } from 'express';
 import { CustomerEntity } from './../entity/customer.entity';
 import { IPayload } from './../models/payload.interface';
-import { Router } from 'express';
-
-// import { CustomerService } from './../services';
 
 import CustomerService from './../services/customers';
 import { CustomerDto } from './../models/dto';
 import validateDto from './../middleware/validate-dto';
 import { CustomerSchemas } from './../schema';
 import { hasCredentials, isAuthenticated } from '../lib/auth';
-import { Roles } from '../config';
-import uploadImage from '../lib/upload-image';
+import config, { Roles } from '../config';
+
+import uploadImage, { ImageService } from '../lib/upload-image';
 import Logger from '../lib/logger';
 
 /** Route Definition */
@@ -21,6 +20,13 @@ const customerRouter: Router = Router();
 customerRouter.get('/', isAuthenticated(), hasCredentials([Roles.Basic, Roles.Admin]), (req, res, next) => {
     CustomerService.find()
         .then(result => {
+            result.map(r => {
+                if (r.photoUrl) {
+                    r.photoUrl = `${config.HOST}/public/customer/${r.photoUrl}`;
+                } else {
+                    r.photoUrl = '';
+                }
+            });
             return res.status(200).json(result);
         })
         .catch(e => res.status(500).json(e));
@@ -38,6 +44,11 @@ customerRouter.get('/:id', isAuthenticated(), hasCredentials([Roles.Basic, Roles
 
     CustomerService.findOne(id)
         .then(result => {
+            if (result.photoUrl) {
+                result.photoUrl = `${config.HOST}/public/customer/${result.photoUrl}`;
+            } else {
+                result.photoUrl = '';
+            }
             return res.status(200).json(result);
         })
         .catch(e => res.status(500).json(e));
@@ -59,11 +70,17 @@ customerRouter.post(
         customer.surname = dto.surname;
         if (req.file) {
             customer.photoUrl = req.file.filename;
+            // move file to a customer image folder.
+            ImageService.moveFile(req.file, '/public/customer');
         }
 
         CustomerService.create(customer, payload)
             .then(newCustomer => {
                 if (newCustomer) {
+                    if (newCustomer.photoUrl !== null) {
+                        newCustomer.photoUrl = `${config.HOST}/public/customer/${newCustomer.photoUrl}`;
+                    }
+
                     res.status(200).json({
                         message: 'Customer Successfully Created',
                         createdCustomer: newCustomer
@@ -101,6 +118,10 @@ customerRouter.put(
         CustomerService.update(customer, payload)
             .then(updatedCustomer => {
                 if (updatedCustomer) {
+                    if (updatedCustomer.photoUrl !== null) {
+                        updatedCustomer.photoUrl = `${config.HOST}/${updatedCustomer.photoUrl}`;
+                    }
+
                     res.status(200).json({
                         message: 'Customer Successfully Updated',
                         createdCustomer: updatedCustomer
