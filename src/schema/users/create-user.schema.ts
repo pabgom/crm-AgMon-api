@@ -4,7 +4,8 @@ import { Roles } from '../../config';
 let createUserSchema = yup.object().shape({
     name: yup.string().required().max(255),
     password: yup.string().required().min(6).max(255),
-    roleId: yup
+    email: yup.string().email().required().min(5).max(255),
+    role: yup
         .number()
         .integer()
         .positive()
