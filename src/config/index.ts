@@ -5,7 +5,9 @@ config();
 
 const configurations = {
     PORT: process.env.PORT || 3000,
-    INITIAL_USER_NAME: process.env.INITIAL_USER_NAME || 'admin@admin.com',
+    HOST: process.env.HOST || 'http://localhost',
+    INITIAL_USER_NAME: process.env.INITIAL_USER_NAME || 'admin',
+    INITIAL_USER_EMAIL: process.env.INITIAL_USER_EMAIL || 'admin@admin.com',
     INITIAL_USER_PASSWORD: process.env.INITIAL_USER_PASSWORD || 'dummy',
     JWT_SECRET_KEY: process.env.JWT_SECRET_KEY || 'default',
     DB_SYNCHRONIZE: process.env.DB_SYNCHRONIZE || 'false',
