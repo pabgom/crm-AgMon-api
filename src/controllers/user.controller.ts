@@ -74,7 +74,7 @@ userRouter.put('/:id', isAuthenticated(), hasCredentials([Roles.Admin]), (req, r
     user.password = dto.password;
     user.email = dto.email;
 
-    UserService.update(user)
+    UserService.update(user, dto.roleId)
         .then(response => {
             if (response instanceof UserEntity) {
                 res.status(200).json({

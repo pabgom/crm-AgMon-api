@@ -4,6 +4,7 @@ import { CustomerEntity, RoleEntity, UserEntity } from './../entity';
 
 export async function InitializeDB(): Promise<void> {
     /** Create Connection to DataBase */
+
     await createConnection({
         type: 'postgres',
         host: config.DB_HOST,
