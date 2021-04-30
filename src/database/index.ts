@@ -14,11 +14,12 @@ export async function InitializeDB(): Promise<void> {
         database: config.DB_DATABASE,
         entities: [UserEntity, CustomerEntity, RoleEntity],
         synchronize: process.env.DB_SYNCHRONIZE === 'true',
-        logging: false
+        logging: process.env.DB_LOGGER
     });
 
     /** Validate if table users is empty, in that case create first user, run the seed data */
     const users = await getRepository(UserEntity).find();
+
     if (users.length > 0) return;
 
     await seedRoles();

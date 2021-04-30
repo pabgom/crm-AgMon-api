@@ -15,7 +15,8 @@ const configurations = {
     DB_PASSWORD: process.env.DB_PASSWORD || '',
     DB_HOST: process.env.DB_HOST || 'localhost',
     DB_PORT: +process.env.DB_PORT || 5433,
-    DB_DATABASE: process.env.DB_DATABASE || 'agileMonkeyDb'
+    DB_DATABASE: process.env.DB_DATABASE || 'agileMonkeyDb',
+    DB_LOGGER: process.env.DB_LOGGER || false
 };
 
 export default configurations;

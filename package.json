@@ -1,12 +1,13 @@
 {
   "name": "package.json",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "APi to Agile Monkey API Test",
   "main": "src/app.ts",
   "scripts": {
     "build": "rimraf ./build && tsc",
-    "start:dev": "nodemon src/app.ts",
-    "start": "npm run build && node build/app.js"
+    "dev": "nodemon src/app.ts",
+    "start": "npm run build && node build/app.js",
+    "production":"node app.js"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,7 @@
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
+    "mv": "^2.1.1",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
