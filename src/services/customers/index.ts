@@ -2,7 +2,7 @@ import { ImageService } from './../../lib/upload-image';
 import { UserEntity } from './../../entity/user.entity';
 import { DeleteResult, getRepository } from 'typeorm';
 import { CustomerEntity } from './../../entity';
-import { IPayload } from '../../models/payload.interface';
+import { IPayload } from '../../models/interfaces';
 
 class CustomerService {
     find(): Promise<CustomerEntity[]> {

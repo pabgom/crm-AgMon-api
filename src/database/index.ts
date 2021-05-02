@@ -14,7 +14,7 @@ export async function InitializeDB(): Promise<void> {
         database: config.DB_DATABASE,
         entities: [UserEntity, CustomerEntity, RoleEntity],
         synchronize: process.env.DB_SYNCHRONIZE === 'true',
-        logging: process.env.DB_LOGGER
+        logging: process.env.DB_LOGGER === 'true'
     });
 
     /** Validate if table users is empty, in that case create first user, run the seed data */

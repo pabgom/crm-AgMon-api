@@ -7,6 +7,7 @@ import { UserDto } from '../models/dto';
 import { UserEntity } from './../entity/user.entity';
 import { Router } from 'express';
 import Logger from '../lib/logger';
+import { UserCreateResponseDto, UserResponseDto } from '../models/dto/users';
 
 /** Route Definition */
 const userRouter: Router = Router();
@@ -16,7 +17,7 @@ const userRouter: Router = Router();
 userRouter.get('/', isAuthenticated(), hasCredentials([Roles.Admin]), (req, res, next) => {
     UserService.find()
         .then(result => {
-            return res.status(200).json(result);
+            return res.status(200).json(result.map(r => new UserResponseDto(r)));
         })
         .catch(e => res.status(500).json(e));
 });
@@ -33,7 +34,7 @@ userRouter.get('/:id', isAuthenticated(), hasCredentials([Roles.Admin]), (req, r
 
     UserService.findOne(id)
         .then(result => {
-            return res.status(200).json(result);
+            return res.status(200).json(new UserResponseDto(result));
         })
         .catch(e => res.status(500).json(e));
 });
@@ -52,7 +53,7 @@ userRouter.post('/', validateDto(UserSchemas.createUserSchema), isAuthenticated(
             if (response instanceof UserEntity) {
                 res.status(200).json({
                     message: 'User Successfully Created',
-                    createdUser: response
+                    createdUser: new UserCreateResponseDto(response)
                 });
             } else {
                 res.status(404).json({ message: response });
@@ -79,7 +80,7 @@ userRouter.put('/:id', isAuthenticated(), hasCredentials([Roles.Admin]), (req, r
             if (response instanceof UserEntity) {
                 res.status(200).json({
                     message: 'User Successfully Updated',
-                    modifiedUser: response
+                    modifiedUser: new UserCreateResponseDto(response)
                 });
             } else {
                 res.status(404).json({ message: response });

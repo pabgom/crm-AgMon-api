@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { CustomerEntity } from './../entity/customer.entity';
-import { IPayload } from './../models/payload.interface';
+import { IPayload } from '../models/interfaces';
 
 import CustomerService from './../services/customers';
 import { CustomerDto } from './../models/dto';
@@ -11,6 +11,7 @@ import config, { Roles } from '../config';
 
 import uploadImage, { ImageService } from '../lib/upload-image';
 import Logger from '../lib/logger';
+import { CustomerCreateResponseDto, CustomerResponseDto } from '../models/dto/customers';
 
 /** Route Definition */
 const customerRouter: Router = Router();
@@ -77,13 +78,9 @@ customerRouter.post(
         CustomerService.create(customer, payload)
             .then(newCustomer => {
                 if (newCustomer) {
-                    if (newCustomer.photoUrl !== null) {
-                        newCustomer.photoUrl = `${config.HOST}/public/customer/${newCustomer.photoUrl}`;
-                    }
-
                     res.status(200).json({
                         message: 'Customer Successfully Created',
-                        createdCustomer: newCustomer
+                        createdCustomer: new CustomerCreateResponseDto(newCustomer)
                     });
                 } else {
                     res.status(404).json({ message: 'Customer not found' });
@@ -118,13 +115,9 @@ customerRouter.put(
         CustomerService.update(customer, payload)
             .then(updatedCustomer => {
                 if (updatedCustomer) {
-                    if (updatedCustomer.photoUrl !== null) {
-                        updatedCustomer.photoUrl = `${config.HOST}/${updatedCustomer.photoUrl}`;
-                    }
-
                     res.status(200).json({
                         message: 'Customer Successfully Updated',
-                        createdCustomer: updatedCustomer
+                        createdCustomer: new CustomerCreateResponseDto(updatedCustomer)
                     });
                 } else {
                     res.status(404).json({ message: 'Customer not found' });
@@ -138,27 +131,21 @@ customerRouter.put(
 );
 
 // DELETE customer/:id
-customerRouter.delete(
-    '/:id',
-    isAuthenticated(),
-    hasCredentials([Roles.Basic, Roles.Admin]),
+customerRouter.delete('/:id', isAuthenticated(), hasCredentials([Roles.Basic, Roles.Admin]), (req, res, next) => {
+    const id = +req.params.id;
 
-    (req, res, next) => {
-        const id = +req.params.id;
-
-        if (isNaN(id) && !Number.isInteger(id)) {
-            return res.status(400).json({ message: 'Input is not correct' });
-        }
-
-        CustomerService.delete(id)
-            .then(result => {
-                res.status(200).json(result);
-            })
-            .catch(e => {
-                Logger.error(e);
-                res.status(500);
-            });
+    if (isNaN(id) && !Number.isInteger(id)) {
+        return res.status(400).json({ message: 'Input is not correct' });
     }
-);
+
+    CustomerService.delete(id)
+        .then(result => {
+            res.status(200).json(result);
+        })
+        .catch(e => {
+            Logger.error(e);
+            res.status(500);
+        });
+});
 
 export default customerRouter;
