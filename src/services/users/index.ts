@@ -15,6 +15,8 @@ class UserService {
             options = { where: { active: userActive } };
         }
 
+        options.relations = ['roles'];
+
         return getRepository(UserEntity).find(options);
     }
 
@@ -23,7 +25,7 @@ class UserService {
     }
 
     findOne(id: number): Promise<UserEntity> {
-        return getRepository(UserEntity).findOne({ where: { id: id, active: true } });
+        return getRepository(UserEntity).findOne({ where: { id: id, active: true }, relations: ['roles'] });
     }
 
     async create(user: UserEntity, roleId: number): Promise<UserEntity | string> {

@@ -7,7 +7,7 @@
     "build": "rimraf ./build && tsc",
     "dev": "nodemon src/app.ts",
     "start": "npm run build && node build/app.js",
-    "production":"node app.js"
+    "production": "node app.js"
   },
   "repository": {
     "type": "git",
@@ -35,7 +35,9 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "pg": "^8.6.0",
+    "swagger-ui-express": "^4.1.6",
     "typeorm": "^0.2.32",
+    "yamljs": "^0.3.0",
     "yup": "^0.32.9"
   },
   "devDependencies": {

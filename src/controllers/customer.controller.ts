@@ -7,11 +7,11 @@ import { CustomerDto } from './../models/dto';
 import validateDto from './../middleware/validate-dto';
 import { CustomerSchemas } from './../schema';
 import { hasCredentials, isAuthenticated } from '../lib/auth';
-import config, { Roles } from '../config';
+import { Roles } from '../config';
 
 import uploadImage, { ImageService } from '../lib/upload-image';
 import Logger from '../lib/logger';
-import { CustomerCreateResponseDto, CustomerResponseDto } from '../models/dto/customers';
+import { CustomerResponseDto } from '../models/dto/customers';
 
 /** Route Definition */
 const customerRouter: Router = Router();
@@ -21,14 +21,7 @@ const customerRouter: Router = Router();
 customerRouter.get('/', isAuthenticated(), hasCredentials([Roles.Basic, Roles.Admin]), (req, res, next) => {
     CustomerService.find()
         .then(result => {
-            result.map(r => {
-                if (r.photoUrl) {
-                    r.photoUrl = `${config.HOST}/public/customer/${r.photoUrl}`;
-                } else {
-                    r.photoUrl = '';
-                }
-            });
-            return res.status(200).json(result);
+            return res.status(200).json(result.map(r => new CustomerResponseDto(r)));
         })
         .catch(e => res.status(500).json(e));
 });
@@ -45,12 +38,7 @@ customerRouter.get('/:id', isAuthenticated(), hasCredentials([Roles.Basic, Roles
 
     CustomerService.findOne(id)
         .then(result => {
-            if (result.photoUrl) {
-                result.photoUrl = `${config.HOST}/public/customer/${result.photoUrl}`;
-            } else {
-                result.photoUrl = '';
-            }
-            return res.status(200).json(result);
+            return res.status(200).json(new CustomerResponseDto(result));
         })
         .catch(e => res.status(500).json(e));
 });
@@ -78,10 +66,7 @@ customerRouter.post(
         CustomerService.create(customer, payload)
             .then(newCustomer => {
                 if (newCustomer) {
-                    res.status(200).json({
-                        message: 'Customer Successfully Created',
-                        createdCustomer: new CustomerCreateResponseDto(newCustomer)
-                    });
+                    res.status(200).json(new CustomerResponseDto(newCustomer));
                 } else {
                     res.status(404).json({ message: 'Customer not found' });
                 }
@@ -115,10 +100,7 @@ customerRouter.put(
         CustomerService.update(customer, payload)
             .then(updatedCustomer => {
                 if (updatedCustomer) {
-                    res.status(200).json({
-                        message: 'Customer Successfully Updated',
-                        createdCustomer: new CustomerCreateResponseDto(updatedCustomer)
-                    });
+                    res.status(200).json(new CustomerResponseDto(updatedCustomer));
                 } else {
                     res.status(404).json({ message: 'Customer not found' });
                 }

@@ -1,0 +1,357 @@
+openapi: 3.0.0
+info:
+    title: 'little monkey shop'
+    description: ''
+    version: 1.0.0
+servers:
+    - url: 'http://localhost:3000'
+      description: ''
+tags:
+    - name: Authorization
+      description: Operations about the Authorization
+    - name: Users
+      description: Operations about the users
+    - name: Customers
+      description: Operations about the customers
+paths:
+    /login:
+        post:
+            tags:
+                - Authorization
+            summary: Get the token from the authentication
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                email:
+                                    type: string
+                                password:
+                                    type: string
+            responses:
+                '200':
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    token:
+                                        type: string
+    /profile:
+        get:
+            tags:
+                - Authorization
+            summary: Get the token from the authentication
+            security:
+                - BearerAuth: []
+            responses:
+                200:
+                    description: Return value from the token
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    id:
+                                        type: integer
+                                    username:
+                                        type: string
+                                    userEmail:
+                                        type: string
+                                    roles:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/Role'
+    /users:
+        get:
+            tags:
+                - Users
+            summary: Returns an user.
+            security:
+                - BearerAuth: []
+            responses:
+                '200':
+                    description: List of Users
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/User'
+        post:
+            tags:
+                - Users
+            summary: Create a new user
+            security:
+                - BearerAuth: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                email:
+                                    type: string
+                                password:
+                                    type: string
+            responses:
+                '200':
+                    description: Return user created
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/User'
+    /users/{userId}:
+        get:
+            tags:
+                - Users
+            summary: Returns an user
+            security:
+                - BearerAuth: []
+            parameters:
+                - name: userId
+                  in: path
+                  required: true
+                  description: he ID of the user to return.
+                  schema:
+                      type: integer
+                      format: int64
+                      minimum: 1
+            responses:
+                '200':
+                    description: Return an user
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/User'
+        put:
+            tags:
+                - Users
+            summary: Update a new user
+            security:
+                - BearerAuth: []
+            parameters:
+                - name: userId
+                  in: path
+                  required: true
+                  description: The ID of the user to return.
+                  schema:
+                      type: integer
+                      format: int64
+                      minimum: 1
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                email:
+                                    type: string
+                                password:
+                                    type: string
+            responses:
+                '200':
+                    description: Return user updated
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/User'
+        delete:
+            tags:
+                - Users
+            summary: Delete an user
+            security:
+                - BearerAuth: []
+            parameters:
+                - name: userId
+                  in: path
+                  required: true
+                  description: The ID of the user to return.
+                  schema:
+                      type: integer
+                      format: int64
+                      minimum: 1
+            responses:
+                '200':
+                    description: Delete an User
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DeleteResponse'
+    /customers:
+        get:
+            tags:
+                - Customers
+            summary: Returns a list of customers
+            security:
+                - BearerAuth: []
+            responses:
+                '200':
+                    description: Return a list of customers
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Customer'
+        post:
+            tags:
+                - Customers
+            summary: Create a new customer
+            security:
+                - BearerAuth: []
+            requestBody:
+                required: true
+                content:
+                    multipart/form-data:
+                        schema:
+                            type: object
+                            properties:
+                                name:
+                                    type: string
+                                surname:
+                                    type: string
+                                customerImage:
+                                    type: string
+                                    format: binary
+                            required:
+                                - name
+                                - surname
+            responses:
+                '200':
+                    description: Return the customer created
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Customer'
+    /customers/{customerId}:
+        get:
+            tags:
+                - Customers
+            summary: Returns an customer
+            security:
+                - BearerAuth: []
+            parameters:
+                - name: customerId
+                  in: path
+                  required: true
+                  description: he ID of the customer to return.
+                  schema:
+                      type: integer
+                      format: int64
+                      minimum: 1
+            responses:
+                '200':
+                    description: Return a customer
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Customer'
+        put:
+            tags:
+                - Customers
+            summary: Update a new customer
+            security:
+                - BearerAuth: []
+            parameters:
+                - name: customerId
+                  in: path
+                  required: true
+                  description: The ID of the customer to return.
+                  schema:
+                      type: integer
+                      format: int64
+                      minimum: 1
+            requestBody:
+                required: true
+                content:
+                    multipart/form-data:
+                        schema:
+                            type: object
+                            properties:
+                                name:
+                                    type: string
+                                surname:
+                                    type: string
+                                customerImage:
+                                    type: string
+                                    format: binary
+            responses:
+                '200':
+                    description: Return a customer update
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Customer'
+        delete:
+            tags:
+                - Customers
+            summary: Delete an customer
+            security:
+                - BearerAuth: []
+            parameters:
+                - name: customerId
+                  in: path
+                  required: true
+                  description: The ID of the customer to return.
+                  schema:
+                      type: integer
+                      format: int64
+                      minimum: 1
+            responses:
+                '200':
+                    description: Delete a customer
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DeleteResponse'
+components:
+    securitySchemes:
+        BearerAuth:
+            type: http
+            scheme: bearer
+            bearerFormat: JWT
+
+    schemas:
+        User:
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                name:
+                    type: string
+                Roles:
+                    items:
+                        type: integer
+                        format: int64
+                    example: [1, 2, 3]
+        Customer:
+            properties:
+                id:
+                    type: integer
+                    format: 'int64'
+                name:
+                    type: string
+                surname:
+                    type: string
+                photoUrl:
+                    type: string
+        Role:
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                name:
+                    type: string
+        DeleteResponse:
+            properties:
+                affected:
+                    type: integer
+                    format: int64
+                raw:
+                    type: array
+                    items:
+                        type: string

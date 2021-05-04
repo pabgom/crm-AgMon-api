@@ -52,11 +52,12 @@ You will receive the below response:
 pong
 ```
 
-## 2.2. Running the project locally with docker
-The first thing you need to install is docker in your system [Docker](https://www.docker.com/)
+## 2.2. Running the project locally with docker compose
+You need to have Docker ([Docker](https://www.docker.com/)) up and running in your system
 
-Run the application is very easy to do, its only two steps.
-- You need to fill the environment file with the name .env.docker as we did in the step 2.1 and the only change is in one field:
+To launch the application just follow the next steps:
+
+- Replace DB_HOST parameter in .env.docker with the according value.in one field:
   ```
   # the DB host should be this value to connect to the api
   DB_HOST=database
@@ -67,3 +68,14 @@ Run the application is very easy to do, its only two steps.
   docker-compose up
   ```
  
+
+ # 3. Documentation
+ You can see the documentation from 2 ways:
+ - you can copy & paste the swagger yaml document from
+```
+config/swagger.yml
+```
+- if you are running the api you can go to this address to see the swagger documentation
+```
+http://localhost:3000/api-docs
+```
