@@ -37,7 +37,6 @@
     "pg": "^8.6.0",
     "swagger-ui-express": "^4.1.6",
     "typeorm": "^0.2.32",
-    "yamljs": "^0.3.0",
     "yup": "^0.32.9"
   },
   "devDependencies": {
