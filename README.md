@@ -70,12 +70,9 @@ To launch the application just follow the next steps:
  
 
  # 3. Documentation
- You can see the documentation from 2 ways:
+There is a swagger document you can use in swagger page.
  - you can copy & paste the swagger yaml document from
 ```
-config/swagger.yml
+config/swagger.json
 ```
-- if you are running the api you can go to this address to see the swagger documentation
-```
-http://localhost:3000/api-docs
-```
+
